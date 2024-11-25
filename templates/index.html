@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-gram Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        // Function to clear the text area
+        function clearTextField() {
+            document.getElementById("text").value = "";
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>N-gram Analysis Tool</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <label for="text">Enter text (or upload a file):</label><br>
+            <textarea id="text" name="text" rows="5" cols="50">{{ text }}</textarea><br><br>
+            <button type="button" class="btn-clear" onclick="clearTextField()">Delete</button><br><br>
+            <label for="file">Upload file:</label>
+            <input id="file" type="file" name="file"><br><br>
+            <label for="n">Enter N (2-7):</label>
+            <input id="n" type="number" name="n" value="{{ n }}" min="2" max="7"><br><br>
+            <button type="submit" class="btn-submit">Analyze</button>
+        </form>
+        <br>
+        {% if error_message %}
+            <p class="error-message">{{ error_message }}</p>
+        {% endif %}
+        {% if results %}
+            <h2>Results:</h2>
+            <form action="/download" method="POST">
+                <button type="submit" class="btn-submit">Save as CSV</button>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>N-gram</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ngram, count in results %}
+                        <tr>
+                            <td>{{ ngram }}</td>
+                            <td>{{ count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <input type="hidden" name="results_json" value="{{ results_json }}">
+            </form>
+        {% endif %}
+    </div>
+</body>
+</html>
